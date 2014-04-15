@@ -1,7 +1,7 @@
 #include <iostream>
 #include "zpr.h"
-#include "Ball.h"
 #include "Physicist.h"
+#include "Ball.h"
 #include "PoolTable.h"
 #include "Cue.h"
 #include <GL/glut.h>
@@ -18,20 +18,20 @@ Physicist physicist;
 PoolTable poolTable;
 Cue cue;
 
-const int FRAMES_PER_SECOND = 40;
+const int FRAMES_PER_SECOND = 10;
 const int SKIP_TICKS = 1000 / FRAMES_PER_SECOND;
 DWORD next_game_tick;
 int sleep_time = 0;
 
 static GLfloat V_table[][3] =
-{{-2.750000, 0.015718, 1.385509}, 
+/*{{-2.750000, 0.015718, 1.385509}, 
 {-2.750000, 0.015718, 1.256944},
 {2.750000, 0.015718, 1.256944},
 {2.750000, 0.015718, 1.385509},
 {-2.750000, 0.144282, 1.385509},
 {-2.750000, 0.144282, 1.256944},
 {2.750000, 0.144282, 1.256944},
-{2.750000, 0.144282, 1.385509}};/* {  {-1.22f, 0.0f, 0.64f}, //v0
+{2.750000, 0.144282, 1.385509}};*/ {  {-1.22f, 0.0f, 0.64f}, //v0
 {1.22f, 0.0f, 0.64f},	//v1
 {1.22f, 0.0f, -0.64f}, //v2
 {-1.22f, 0.0f, -0.64f}, //v3
@@ -48,8 +48,8 @@ static GLfloat V_table[][3] =
 {0.82f, -1.0f, 0.44f}, //v13
 {0.82f, -1.0f, -0.44f}, //v14
 {-0.82f, -1.0f, -0.44f}}; //v15
-*/
-static int S_table[][3] = { {5,6,1}, //s1
+
+static int S_table[][3] = /*{ {5,6,1}, //s1
 {6,7,2}, //s2
 {7,8,3}, //s3
 {8,5,4}, //s4
@@ -62,7 +62,7 @@ static int S_table[][3] = { {5,6,1}, //s1
 {5,1,4}, //s11
 {2,3,4}, //s12
 {7,6,5}}; //s13
-/*{6,9,10}, //s14
+{6,9,10}, //s14
 {6,7,10}, //s15
 {7,10,11}, //s16
 {4,7,11}, //s17
@@ -77,7 +77,7 @@ static int S_table[][3] = { {5,6,1}, //s1
 {8,11,12}, //s26
 {12,13,14}, //s27
 {12,13,15}}; //s28*/
-/*{ {0,3,1}, //s1
+{ {0,3,1}, //s1
 {1,3,2}, //s2
 {4,0,5}, //s3
 {0,1,5}, //s4
@@ -105,7 +105,7 @@ static int S_table[][3] = { {5,6,1}, //s1
 {8,11,12}, //s26
 {12,13,14}, //s27
 {12,13,15}}; //s28
-*/
+
 
 
 /*void DrawFigure(int n, GLfloat v[][3], int s[][3])
@@ -168,12 +168,12 @@ void drawScene()
 	// Clear screen to background color.
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	//Ball whiteBall = Ball();
-	poolTable.drawTable(12, V_table, S_table);
+	poolTable.drawTable(28, V_table, S_table);
 	//DrawFigure(28, V_table, S_table);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity;//ja bym to usunal
 	//Tworzenie Kuli bia³ej:)
-	whiteBall.drawBall(1.0,1.0,1.0);
+	whiteBall.drawBall(physicist, 1.0,1.0,1.0);
 	cue.drawCue(whiteBall, 1.0,1.0,1.0);
 	physicist.moveBall(whiteBall);
 	//whiteBall.changePosition(0.0, 0.0, (double)++i/1000.0);

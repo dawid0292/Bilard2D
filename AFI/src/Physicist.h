@@ -1,7 +1,7 @@
 #ifndef PHYSICIST_H
 #define PHYSICIST_H
 
-#include "Ball.h"
+class Ball;
 
 class Physicist{
 public:

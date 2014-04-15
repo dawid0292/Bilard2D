@@ -1,10 +1,12 @@
 #ifndef BALL_H
 #define BALL_H
 
+class Physicist;
+
 class Ball{
 public:
 	Ball();
-	void drawBall(double, double, double);
+	void drawBall(Physicist, double, double, double);
 	void changePosition(double, double, double);
 	void setX(double x){this->x = x;};
 	void setZ(double z){this->z = z;};
