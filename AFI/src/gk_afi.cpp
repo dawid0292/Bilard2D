@@ -201,7 +201,7 @@ void drawScene()
 //! Metoda realizuj¹ca obliczenia na potrzeby kolejnych klatek, generuje animacjê
 void animate() {
 
-
+	//whiteBall.drawBall(physicist, 1.0,1.0,1.0);
 	//std::cout<<"jestes w animate"<<std::endl;
 
 	glutPostRedisplay();

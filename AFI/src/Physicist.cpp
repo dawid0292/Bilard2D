@@ -19,10 +19,10 @@ void Physicist::moveBall(Ball & ball){
 void Physicist::rotateBall(Ball & ball){
 	double axisAngle = ball.getAngle() - 90;//kat osi obrotu
 	//glPushMatrix();
-	glTranslated(-ball.getX(), 0.0, -ball.getZ());
+	//glTranslated(-ball.getX(), 0.0, -ball.getZ());
 	//glRotated(5, 1.0, 0.0, sin(3.14 * axisAngle / 180));//tu zamiast tego 5 powinno bys jakies przeliczenie ile drogi pokona
-	glRotated(5, 0.0, 1.0, 0.0);
+	glRotated(5, 1.0, 0.0, 0.0);
 	//std::cout<<"obrocilem"<<std::endl;
-	glTranslated(ball.getX(), 0.0, ball.getZ());
+	//glTranslated(ball.getX(), 0.0, ball.getZ());
 	//glPopMatrix();
 }
