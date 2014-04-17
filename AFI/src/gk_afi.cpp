@@ -4,14 +4,18 @@
 #include "Ball.h"
 #include "PoolTable.h"
 #include "Cue.h"
+#include "Vertex.h"
 #include <GL/glut.h>
 #include <osg/Matrix>
 #include <osg/Vec3>
 #include <osg/Quat>
+#include <vector>
 
 
 
 int i = 0;
+
+
 
 Ball whiteBall = Ball();
 Physicist physicist;
@@ -23,15 +27,97 @@ const int SKIP_TICKS = 1000 / FRAMES_PER_SECOND;
 DWORD next_game_tick;
 int sleep_time = 0;
 
+bool loadOBJ(const char * path, std::vector< Vertex> & out_vertices, std::vector< Vertex > & out_uvs, std::vector< Vertex > & out_normals){
+	std::vector< unsigned int > vertexIndices, uvIndices, normalIndices;
+	std::vector< Vertex> temp_vertices;
+	std::vector< Vertex> temp_uvs;
+	std::vector< Vertex > temp_normals;
+	int max = 0;
+
+	FILE * file = fopen(path, "r");
+	if( file == NULL ){
+		printf("Impossible to open the file !\n");
+		return false;
+	}
+
+	while( 1 ){
+		char lineHeader[128];
+		// read the first word of the line
+		int res = fscanf(file, "%s", lineHeader);
+		//std::cout<<lineHeader<<std::endl;
+		if (res == EOF)
+			break; // EOF = End Of File. Quit the loop.
+		// else : parse lineHeader
+		if ( strcmp( lineHeader, "v" ) == 0 ){
+			Vertex vertex;
+			fscanf(file, "%lf %lf %lf\n", &vertex.x, &vertex.y, &vertex.z );
+			//std::cout<<vertex.x<<" "<<vertex.y<<" "<<vertex.z<<std::endl;
+			//Sleep(1000);
+			temp_vertices.push_back(vertex);
+		}else if ( strcmp( lineHeader, "vt" ) == 0 ){
+			Vertex uv;
+			fscanf(file, "%f %f\n", &uv.x, &uv.y );
+			temp_uvs.push_back(uv);
+		}else if ( strcmp( lineHeader, "vn" ) == 0 ){
+			Vertex normal;
+			fscanf(file, "%f %f %f\n", &normal.x, &normal.y, &normal.z );
+			temp_normals.push_back(normal);
+		}else if ( strcmp( lineHeader, "f" ) == 0 ){
+			std::string vertex1, vertex2, vertex3;
+			unsigned int vertexIndex[3], uvIndex[3], normalIndex[3];
+			int matches = fscanf(file, "%d//%d %d//%d %d//%d\n", &vertexIndex[0], /*&uvIndex[0],*/ &normalIndex[0], &vertexIndex[1], /*&uvIndex[1], */&normalIndex[1], &vertexIndex[2],/* &uvIndex[2],*/ &normalIndex[2] );
+			if (matches != 6){
+				printf("File can't be read by our simple parser : ( Try exporting with other options\n");
+				return false;
+			}
+			if(max < vertexIndex[0])
+				max = vertexIndex[0];
+			if(max < vertexIndex[1])
+				max = vertexIndex[1];
+			if(max < vertexIndex[2])
+				max = vertexIndex[2];
+			vertexIndices.push_back(vertexIndex[0]);
+			vertexIndices.push_back(vertexIndex[1]);
+			vertexIndices.push_back(vertexIndex[2]);
+			//std::cout<<vertexIndex[0]<<" "<<vertexIndex[1]<<" "<<vertexIndex[2]<<std::endl;
+			//Sleep(100);
+			//uvIndices    .push_back(uvIndex[0]);
+			//uvIndices    .push_back(uvIndex[1]);
+			//uvIndices    .push_back(uvIndex[2]);
+			normalIndices.push_back(normalIndex[0]);
+			normalIndices.push_back(normalIndex[1]);
+			normalIndices.push_back(normalIndex[2]);
+		}
+	}
+	// For each vertex of each triangle
+	std::cout<<vertexIndices.size()<<std::endl;
+	for( unsigned int i=0; i<vertexIndices.size(); i++ ){
+		unsigned int vertexIndex = vertexIndices[i];
+		//std::cout<<temp_vertices[i].x<<" "<<temp_vertices[i].y<<" "<<temp_vertices[i].z<<std::endl;
+		//Sleep(1000);
+		Vertex vertex = temp_vertices[ vertexIndex-1 ];
+		out_vertices.push_back(vertex);
+		//std::cout<<vertex.x<<" "<<vertex.y<<" "<<vertex.z<<std::endl;
+		//std::cout<<vertices[i].x<<" "<<vertices[i].y<<" "<<vertices[i].z<<std::endl;
+		//Sleep(1000);
+	}
+	std::cout<<max<<std::endl;
+	//Sleep(10000);
+};
+
+std::vector< Vertex > vertices;
+std::vector< Vertex > uvs;
+std::vector< Vertex > normals;
+
 static GLfloat V_table[][3] =
-/*{{-2.750000, 0.015718, 1.385509}, 
-{-2.750000, 0.015718, 1.256944},
-{2.750000, 0.015718, 1.256944},
-{2.750000, 0.015718, 1.385509},
-{-2.750000, 0.144282, 1.385509},
-{-2.750000, 0.144282, 1.256944},
-{2.750000, 0.144282, 1.256944},
-{2.750000, 0.144282, 1.385509}};*/ {  {-1.22f, 0.0f, 0.64f}, //v0
+	/*{{-2.750000, 0.015718, 1.385509}, 
+	{-2.750000, 0.015718, 1.256944},
+	{2.750000, 0.015718, 1.256944},
+	{2.750000, 0.015718, 1.385509},
+	{-2.750000, 0.144282, 1.385509},
+	{-2.750000, 0.144282, 1.256944},
+	{2.750000, 0.144282, 1.256944},
+	{2.750000, 0.144282, 1.385509}};*/ {  {-1.22f, 0.0f, 0.64f}, //v0
 {1.22f, 0.0f, 0.64f},	//v1
 {1.22f, 0.0f, -0.64f}, //v2
 {-1.22f, 0.0f, -0.64f}, //v3
@@ -50,33 +136,33 @@ static GLfloat V_table[][3] =
 {-0.82f, -1.0f, -0.44f}}; //v15
 
 static int S_table[][3] = /*{ {5,6,1}, //s1
-{6,7,2}, //s2
-{7,8,3}, //s3
-{8,5,4}, //s4
-{1,2,4}, //s5
-{8,7,5}, //s6
-{6,2,1}, //s7
-{7,3,2}, //s8
- //s9
-{8,4,3}, //s10
-{5,1,4}, //s11
-{2,3,4}, //s12
-{7,6,5}}; //s13
-{6,9,10}, //s14
-{6,7,10}, //s15
-{7,10,11}, //s16
-{4,7,11}, //s17
-{4,8,11}, //s18
-{8,9,12}, //s19
-{9,12,13}, //s20
-{9,10,13}, //s21
-{10,13,14}, //s22
-{10,14,15}, //s23
-{10,11,15}, //s24
-{11,12,15}, //s25
-{8,11,12}, //s26
-{12,13,14}, //s27
-{12,13,15}}; //s28*/
+						  {6,7,2}, //s2
+						  {7,8,3}, //s3
+						  {8,5,4}, //s4
+						  {1,2,4}, //s5
+						  {8,7,5}, //s6
+						  {6,2,1}, //s7
+						  {7,3,2}, //s8
+						  //s9
+						  {8,4,3}, //s10
+						  {5,1,4}, //s11
+						  {2,3,4}, //s12
+						  {7,6,5}}; //s13
+						  {6,9,10}, //s14
+						  {6,7,10}, //s15
+						  {7,10,11}, //s16
+						  {4,7,11}, //s17
+						  {4,8,11}, //s18
+						  {8,9,12}, //s19
+						  {9,12,13}, //s20
+						  {9,10,13}, //s21
+						  {10,13,14}, //s22
+						  {10,14,15}, //s23
+						  {10,11,15}, //s24
+						  {11,12,15}, //s25
+						  {8,11,12}, //s26
+						  {12,13,14}, //s27
+						  {12,13,15}}; //s28*/
 { {0,3,1}, //s1
 {1,3,2}, //s2
 {4,0,5}, //s3
@@ -168,7 +254,8 @@ void drawScene()
 	// Clear screen to background color.
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	//Ball whiteBall = Ball();
-	poolTable.drawTable(28, V_table, S_table);
+	//std::cout<<vertices[vertices.size() - 1].x<<std::endl;
+	poolTable.drawTable(vertices.size() , vertices);
 	//DrawFigure(28, V_table, S_table);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity;//ja bym to usunal
@@ -271,6 +358,13 @@ int main(int argc, char **argv)
 
 	// Set position of OpenGL window upper-left corner.
 	glutInitWindowPosition(50, 50); 
+
+	bool res = loadOBJ("stol.obj", vertices, uvs, normals);
+	std::cout<<" "<<vertices.size();
+	for(int i = 0; i < vertices.size(); i++){
+		//std::cout<<vertices[i].x<<" "<<vertices[i].y<<" "<<vertices[i].z<<std::endl;
+	}
+	//Sleep(10000);
 
 	// Create OpenGL window with title.
 	glutCreateWindow("Bilard 3D5");
