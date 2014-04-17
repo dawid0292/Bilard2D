@@ -260,9 +260,9 @@ void drawScene()
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity;//ja bym to usunal
 	//Tworzenie Kuli bia³ej:)
-	whiteBall.drawBall(physicist, 1.0,1.0,1.0);
+	/*whiteBall.drawBall(physicist, 1.0,1.0,1.0);
 	cue.drawCue(whiteBall, 1.0,1.0,1.0);
-	physicist.moveBall(whiteBall);
+	physicist.moveBall(whiteBall);*/
 	//whiteBall.changePosition(0.0, 0.0, (double)++i/1000.0);
 	/*glPushMatrix();
 	glTranslatef(0.5,0.05,0);
@@ -278,20 +278,27 @@ void drawScene()
 	// Swap buffers for double buffering
 	glutSwapBuffers();
 
-	next_game_tick += SKIP_TICKS;
-	sleep_time = next_game_tick - GetTickCount();
-	if( sleep_time >= 0 ) {
-		Sleep( sleep_time );
-	}
+	
 }
 
 //! Metoda realizuj¹ca obliczenia na potrzeby kolejnych klatek, generuje animacjê
 void animate() {
 
 	//whiteBall.drawBall(physicist, 1.0,1.0,1.0);
-	//std::cout<<"jestes w animate"<<std::endl;
+	std::cout<<"jestes w animate"<<std::endl;
+	drawScene();
+	
 
 	glutPostRedisplay();
+
+
+	next_game_tick += SKIP_TICKS;
+	sleep_time = next_game_tick - GetTickCount();
+	if( sleep_time >= 0 ) {
+		Sleep( sleep_time );
+	}
+
+
 }
 //! Zmienne opisuj¹ce materia³ i œwiat³o OpenGL
 const GLfloat light_ambient[]  = { 0.0f, 0.0f, 0.0f, 1.0f };
