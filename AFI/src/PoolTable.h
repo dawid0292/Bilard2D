@@ -9,7 +9,7 @@ class PoolTable{
 private:
 	double x, y, z;
 public:
-	void drawTable(int, std::vector< Vertex >);
+	void drawTable(int, std::vector< Vertex >, std::vector< Vertex>);
 };
 
 #endif

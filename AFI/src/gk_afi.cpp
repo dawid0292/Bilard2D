@@ -1,4 +1,5 @@
 #include <iostream>
+
 #include "zpr.h"
 #include "Physicist.h"
 #include "Ball.h"
@@ -10,6 +11,7 @@
 #include <osg/Vec3>
 #include <osg/Quat>
 #include <vector>
+
 
 
 
@@ -26,6 +28,7 @@ const int FRAMES_PER_SECOND = 10;
 const int SKIP_TICKS = 1000 / FRAMES_PER_SECOND;
 DWORD next_game_tick;
 int sleep_time = 0;
+
 
 bool loadOBJ(const char * path, std::vector< Vertex> & out_vertices, std::vector< Vertex > & out_uvs, std::vector< Vertex > & out_normals){
 	std::vector< unsigned int > vertexIndices, uvIndices, normalIndices;
@@ -57,16 +60,21 @@ bool loadOBJ(const char * path, std::vector< Vertex> & out_vertices, std::vector
 		}else if ( strcmp( lineHeader, "vt" ) == 0 ){
 			Vertex uv;
 			fscanf(file, "%f %f\n", &uv.x, &uv.y );
+			//std::cout<<uv.x<<" "<<uv.y<<" "<<std::endl;
+			//Sleep(1000);
+			uv.y = -uv.y;
 			temp_uvs.push_back(uv);
 		}else if ( strcmp( lineHeader, "vn" ) == 0 ){
 			Vertex normal;
 			fscanf(file, "%f %f %f\n", &normal.x, &normal.y, &normal.z );
+			//std::cout<<normal.x<<" "<<normal.y<<" "<<normal.z<<std::endl;
+			//Sleep(1000);
 			temp_normals.push_back(normal);
 		}else if ( strcmp( lineHeader, "f" ) == 0 ){
 			std::string vertex1, vertex2, vertex3;
 			unsigned int vertexIndex[3], uvIndex[3], normalIndex[3];
-			int matches = fscanf(file, "%d//%d %d//%d %d//%d\n", &vertexIndex[0], /*&uvIndex[0],*/ &normalIndex[0], &vertexIndex[1], /*&uvIndex[1], */&normalIndex[1], &vertexIndex[2],/* &uvIndex[2],*/ &normalIndex[2] );
-			if (matches != 6){
+			int matches = fscanf(file, "%d/%d/%d %d/%d/%d %d/%d/%d\n", &vertexIndex[0], &uvIndex[0], &normalIndex[0], &vertexIndex[1], &uvIndex[1], &normalIndex[1], &vertexIndex[2], &uvIndex[2], &normalIndex[2] );
+			if (matches != 9){
 				printf("File can't be read by our simple parser : ( Try exporting with other options\n");
 				return false;
 			}
@@ -81,9 +89,9 @@ bool loadOBJ(const char * path, std::vector< Vertex> & out_vertices, std::vector
 			vertexIndices.push_back(vertexIndex[2]);
 			//std::cout<<vertexIndex[0]<<" "<<vertexIndex[1]<<" "<<vertexIndex[2]<<std::endl;
 			//Sleep(100);
-			//uvIndices    .push_back(uvIndex[0]);
-			//uvIndices    .push_back(uvIndex[1]);
-			//uvIndices    .push_back(uvIndex[2]);
+			uvIndices    .push_back(uvIndex[0]);
+			uvIndices    .push_back(uvIndex[1]);
+			uvIndices    .push_back(uvIndex[2]);
 			normalIndices.push_back(normalIndex[0]);
 			normalIndices.push_back(normalIndex[1]);
 			normalIndices.push_back(normalIndex[2]);
@@ -93,10 +101,16 @@ bool loadOBJ(const char * path, std::vector< Vertex> & out_vertices, std::vector
 	std::cout<<vertexIndices.size()<<std::endl;
 	for( unsigned int i=0; i<vertexIndices.size(); i++ ){
 		unsigned int vertexIndex = vertexIndices[i];
+		unsigned int uvIndex = uvIndices[i];
+		unsigned int normalIndex = normalIndices[i];
 		//std::cout<<temp_vertices[i].x<<" "<<temp_vertices[i].y<<" "<<temp_vertices[i].z<<std::endl;
 		//Sleep(1000);
 		Vertex vertex = temp_vertices[ vertexIndex-1 ];
+		Vertex uv = temp_uvs[uvIndex -1];
+		Vertex normal = temp_normals[normalIndex-1];
 		out_vertices.push_back(vertex);
+		out_uvs.push_back(uv);
+		out_normals.push_back(normal);
 		//std::cout<<vertex.x<<" "<<vertex.y<<" "<<vertex.z<<std::endl;
 		//std::cout<<vertices[i].x<<" "<<vertices[i].y<<" "<<vertices[i].z<<std::endl;
 		//Sleep(1000);
@@ -255,7 +269,10 @@ void drawScene()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	//Ball whiteBall = Ball();
 	//std::cout<<vertices[vertices.size() - 1].x<<std::endl;
-	poolTable.drawTable(vertices.size() , vertices);
+	poolTable.drawTable(vertices.size() , vertices, normals);
+	
+
+
 	//DrawFigure(28, V_table, S_table);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity;//ja bym to usunal
@@ -365,7 +382,7 @@ int main(int argc, char **argv)
 
 	// Set position of OpenGL window upper-left corner.
 	glutInitWindowPosition(50, 50); 
-
+	
 	bool res = loadOBJ("stol.obj", vertices, uvs, normals);
 	std::cout<<" "<<vertices.size();
 	for(int i = 0; i < vertices.size(); i++){

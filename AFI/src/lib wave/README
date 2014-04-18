@@ -1,0 +1,228 @@
+libwave - Wavefront/GL rendering library
+
+Version 1.4.1 
+12 January 1996 
+by Dave Pape (pape@evl.eecs.uic.edu) 
+
+libwave is a library for reading Wavefront .obj object files and rendering
+them with IrisGL or OpenGL. It supports basic geometry (faces and lines), and
+materials and texture maps, as far as is possible with GL (i.e. no bump
+maps, reflection, or refraction). 
+
+The typical application can make use of the library with just two function
+calls, as in the following code excerpt: 
+
+        #include "wave.h"
+        ...
+        wfObject *obj;
+        obj = wfReadObject("foo.obj");
+        ...
+        winopen();
+        /* Initialize GL - RGB, Zbuffering, lights, etc. */
+        ...
+        wfDrawObject(obj);
+        ...
+
+More daring programmers can access and/or modify the object data itself,
+as stored in the wfObject structure. Such use is not currently documented
+here; see the source code (wave.h and the sample program wfaddtex.c) for
+details. 
+
+The most current version of the library (libwave.a/libwave_ogl.a and wave.h) can always
+be found in ~pape/lib at EVL. 
+
+libwave.tar.Z contains the library and source code, as well as some sample
+applications. To use the library as is, you merely need to extract the files
+wave.h and libwave.a (or libwave_ogl.a).
+libwave.a is the IrisGL version of the library; libwave_ogl.a is the OpenGL version.
+wfdraw (built from main.c & spin.c) displays Wavefront objects, allowing
+you to move and spin them with the mouse. wfbounds will print out the
+bounding box and bounding sphere information for an object. wfaddtex
+adds texture mapping to an object, with several different simple methods
+for generating the texture vertices. 
+
+Functions:
+
+wfObject * wfReadObject(char * filename) 
+   Reads the obj file filename and stores all the geometry, material, and
+   texture data in a wfObject structure. A pointer to the structure is
+   returned; this pointer should be passed to wfDrawObject() to render
+   the object. All associated files (material & texture libraries) should
+   be in the current directory, or have their full path included in the obj
+   file. 
+void wfDrawObject(wfObject * object) 
+   Renders the object using GL. wfInitObject() will be called
+   automatically if the object has not already been initialized. 
+void wfInitObject(wfObject * object) 
+   Initializes the GL data for an object - ie defines any materials or
+   textures that the object uses. This normally does not need to be
+   called directly by an application; however, if the object is stored in
+   shared memory (via wfSetMemoryAllocator()) and is used in
+   multiple processes (as in the CAVE), this *should* be called
+   directly, to make sure that all processes do the initialization. 
+void wfGetBoundingSphere(wfObject *obj,wfVertex center,float *radius) 
+   Returns a bounding sphere for an object, in the form of a center
+   point and a radius. The sphere's center is the average of all the
+   vertices in the object; the radius is the distance from the center to the
+   farthest vertex. 
+void wfGetBoundingBox(wfObject *obj,wfVertex corner0,wfVertex corner1)
+   Returns an axis-aligned bounding box for an object. corner0 is the
+   minimum X, Y, and Z coordinates of the object's vertices; corner1 is
+   the maximum X, Y, and Z coordinates. 
+void wfSetMemoryAllocator(void * (*allocfn)(size_t),void (*freefn)(void
+*)) 
+   Defines the memory allocation and de-allocation functions which
+   will be used by wfReadObject() when creating an object. The default
+   functions are malloc() and free(). This can be used to make objects
+   be stored in shared memory. 
+void wfSetNewIDFunction(int (*newidfn)(void)) 
+   Defines the function which the library will call to obtain unique
+   material and texture IDs. An internally provided function is used by
+   default. If you have some function that is used by other drawing
+   routines to select IDs, this can be used to have the library call that
+   same function and thus prevent ID collisions. 
+void wfWriteObject(FILE *fp,wfObject *obj) 
+   Writes an object to a file. fp should be a pointer to a file opened for
+   writing; obj is a pointer to the object. The vertices, normals, texture
+   vertices, faces, lines, mtllib/usemtl, and maplib/usemap entries will
+   be written; all other parts of the original obj file (comments, groups,
+   etc) are not stored in the wfObject structure. 
+void wfEnable(int id) 
+void wfDisable(int id) 
+   Enables or disables certain features. Possible values for id and their
+   meanings are: 
+      WF_SHOW_DEFINED_TEXTURES - When textures are
+      defined during an object's initialization, the images are
+      lrectwritten to the framebuffer, if this is enabled. You will
+      probably want to use frontbuffer(TRUE) when an object is
+      initialized with this feature. Disabled by default. 
+      WF_USE_TEXTURES - Whether or not to define & bind
+      textures for objects. This can be toggled at any time during
+      execution, but if it will be enabled, you should make sure
+      that it is enabled when objects are initialized. Enabled by
+      default. 
+      WF_DRAW_WIREFRAME - If enabled, polygons will be
+      drawn as wireframe outlines (using GL lines) rather than
+      solid polygons. Textures and normals are still used in
+      wireframe mode. Disabled by default. 
+int wfIsEnabled(int id) 
+   Returns the current state (0 or 1) of a feature controlled by 
+   wfEnable() / wfDisable(). 
+wfObject * wfCopyObjectGeometry(wfObject *obj) 
+   Creates a copy of an object with distinct geometry data, but the same
+   topology and texture data. A new wfObject struct and new arrays for
+   the vertex and normal data are allocated, and the values are copied
+   from obj. The texture coordinate array and 'parts' list (the list of all
+   the faces and material/texture invocations) entries of the new
+   wfObject are the same pointers as in obj. 
+void wfTranslateObject(wfObject *obj,float tx,float ty,float tz) 
+   Modifies the vertex position data of an object to translate it by 
+   (tx,ty,tz). 
+void wfRotateObject(wfObject *obj,float angle,float x,float y,float z) 
+   Modifies the vertex position and normal data of an object to rotate it
+   around the axis (x,y,z) by angle degrees. 
+void wfScaleObject(wfObject *obj,float sx,float sy,float sz) 
+   Modifies the vertex position data of an object to scale it by (sx,sy,sz).
+void wfDeformObject(wfObject *obj,void (*vertFunc)(float *),void
+(*normFunc)(float *)) 
+   Modifies the vertex position and normal data of an object using
+   application-provided deformation functions. vertFunc should take a
+   single vertex (a pointer to 3 floats) and modify the values in place. 
+   normFunc should operate similarly on a normal vector. These
+   functions are applied to all of the vertices and normals in the object
+   in turn. Either of these function pointers may be NULL if they are
+   not to be used. 
+void wfComputeNormals(wfObject *obj,int smooth,int clockwise) 
+   Computes the normals for an object and adds them to all the faces;
+   any existing normals will be removed. If the flag smooth is false,
+   normals will be computed on a per-face, rather than per-vertex,
+   basis; if it is true, each vertex's normal will be computed as the
+   average of the normals of all the faces that include the vertex. If the
+   flag clockwise is true, the function will assume that each face's
+   vertices are listed in clockwise order; otherwise, it will assume
+   counter-clockwise ordering. 
+wfFace *wfRayIntersection(wfObject *obj,float ray0[3],float
+raydelta[3],float *ret_t) 
+   Computes the intersection of a ray with an object. The ray is
+   described by a starting point ray0 and a direction vector raydelta.
+   The function will test each face of the object for an intersection, and
+   will return a pointer to the intersected face which is nearest to ray0. 
+   ret_t returns the parametric position of the intersection point on the
+   ray; i.e. the point of intersection is ray0 + (*ret_t) * raydelta. Only
+   intersection points in the positive direction of the ray (*ret_t > 0) are
+   considered. If no face is intersected, NULL is returned and *ret_t is
+   untouched. If ret_t is NULL, it is ignored. 
+int wfRayHits(wfObject *obj,float *ray0,float *raydelta) 
+   Determines whether a ray intersects an object. The ray is defined and
+   the intersection tested as in wfRayIntersection(), however this
+   function merely returns 1 if any face is intersected, and 0 if no face
+   is intersected. This will be faster than wfRayIntersection() when
+   there is an intersection. 
+
+Data Types
+
+wfObject 
+   A struct containing pointers to all the data for an object. This can
+   generally be treated as opaque; see the definition in wave.h if you
+   wish to access the data it contains. 
+wfVertex 
+   An array of 3 floats, containing vertex position data (X/Y/Z). 
+
+Notes:
+
+Wavefront texture maps are not supported. Instead, all texture maps are
+assumed to be SGI format images; if a filename ending in ".tex" is given in
+a map specification, the ".tex" is replaced by ".sgi". Ambient, specular, and
+bump maps are not supported; only diffuse & dissolve maps are. The '-s'
+and '-o' options of .map files are supported, but they must include all three
+scale or offset values (e.g. '-o .5 .2 0'). 
+
+Rendering an object (in wfDrawObject()) involves stepping through a
+linked list of the geometry and other data; putting the wfDrawObject call
+into a GL object (see makeobj()) can give a big win in rendering speed. 
+
+wfReadObject() calls strtok() to parse lines in the obj file. This may cause a
+conflict if your code also uses strtok() while calling wfReadObject(). 
+
+Only wfInitObject() and wfDrawObject() make any GL calls. All other
+functions can be used without a window. 
+
+
+
+Changes:
+
+Version 1.4.1: 
+   Corrected scaling option for .map files - uses -s, not -mm. 
+   Added -o (offset) support for .map files. 
+Version 1.4: 
+   Added WF_DRAW_WIREFRAME option for
+   wfEnable/wfDisable. 
+   Added wfCopyObjectGeometry(), wfTranslateObject(),
+   wfRotateObject(), wfScaleObject(), wfDeformObject(),
+   wfComputeNormals(), wfRayIntersection(), wfRayHits(). 
+Version 1.3.3: 
+   Fixed subtle bug that only showed up when reading very large files. 
+Version 1.3.2: 
+   Added wfEnable()/wfDisable() features. 
+Version 1.3.1: 
+   Added app_data element to wfObject. 
+   Corrected maplib & usemap output of wfWriteObject(). 
+   Optimized texture definition (a given image file will only be
+   texdef'ed once). 
+   Optimized wfDrawObject() to reduce unnecessary GL calls (e.g.
+   redundant normals). 
+Version 1.3: 
+   Added wfMaterialLib & wfTextureLib 'parts'. 
+   Added wfWriteObject(). 
+Version 1.2.1: 
+   Added error checks for failed memory allocation. 
+Version 1.2: 
+   Added support for relative indexing of vertices, normals, and texture
+   vertices (e.g. vertex number -1). 
+Version 1.1: 
+   Replaced use of dpNewID() by wfNewID(). Added
+   wfSetNewIDFunction(). 
+
+
+Last modified 12 January 1996. 
+Dave Pape, pape@evl.eecs.uic.edu 
