@@ -383,13 +383,11 @@ int main(int argc, char **argv)
 
 	// Set position of OpenGL window upper-left corner.
 	glutInitWindowPosition(50, 50); 
-<<<<<<< HEAD
-	
-=======
+
 
 	//gluLookAt( 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0 );
 
->>>>>>> 3f909a9d6397861b68916d6b8bf1af9c4e13da8f
+
 	bool res = loadOBJ("stol.obj", vertices, uvs, normals);
 	std::cout<<" "<<vertices.size();
 	for(int i = 0; i < vertices.size(); i++){
