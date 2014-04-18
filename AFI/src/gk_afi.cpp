@@ -260,9 +260,9 @@ void drawScene()
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity;//ja bym to usunal
 	//Tworzenie Kuli bia³ej:)
-	/*whiteBall.drawBall(physicist, 1.0,1.0,1.0);
+	whiteBall.drawBall(physicist, 1.0,1.0,1.0);
 	cue.drawCue(whiteBall, 1.0,1.0,1.0);
-	physicist.moveBall(whiteBall);*/
+	//physicist.moveBall(whiteBall);*/
 	//whiteBall.changePosition(0.0, 0.0, (double)++i/1000.0);
 	/*glPushMatrix();
 	glTranslatef(0.5,0.05,0);
@@ -285,7 +285,8 @@ void drawScene()
 void animate() {
 
 	//whiteBall.drawBall(physicist, 1.0,1.0,1.0);
-	std::cout<<"jestes w animate"<<std::endl;
+	//std::cout<<"jestes w animate"<<std::endl;
+	physicist.moveBall(whiteBall);
 	drawScene();
 	
 
@@ -365,6 +366,8 @@ int main(int argc, char **argv)
 
 	// Set position of OpenGL window upper-left corner.
 	glutInitWindowPosition(50, 50); 
+
+	//gluLookAt( 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0 );
 
 	bool res = loadOBJ("stol.obj", vertices, uvs, normals);
 	std::cout<<" "<<vertices.size();
