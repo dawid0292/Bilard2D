@@ -21,7 +21,7 @@ void Physicist::rotateBall(Ball & ball){
 	//glPushMatrix();
 	//glTranslated(-ball.getX(), 0.0, -ball.getZ());
 	//glRotated(5, 1.0, 0.0, sin(3.14 * axisAngle / 180));//tu zamiast tego 5 powinno bys jakies przeliczenie ile drogi pokona
-	glRotated(5, 1.0, 0.0, 0.0);
+	//glRotated(5, 1.0, 0.0, 0.0);
 	//std::cout<<"obrocilem"<<std::endl;
 	//glTranslated(ball.getX(), 0.0, ball.getZ());
 	//glPopMatrix();

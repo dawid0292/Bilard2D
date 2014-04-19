@@ -3,6 +3,7 @@
 #include <memory.h>
 #include <math.h>
 #include "zpr.h"
+#include "Cue.h"
 
 /* This code was originally C++ :-) */
 
@@ -10,7 +11,8 @@
 #define true 1
 #define false 0
 
-static double eyex = 0.0, eyey = 0.0, eyez = 0.0, centerx = 0.0, centery = 0.0, centerz = 0.0;
+extern Cue cue;
+
 static double incidenceAngle = 0.0, rotateAngle = 0.0;
 
 static double _left   = 0.0;
@@ -57,11 +59,11 @@ void
 	glutReshapeFunc(zprReshape);
 	glutKeyboardFunc(keyboard);
 	glutMouseFunc(zprMouse);
-	glutMotionFunc(zprMotion);
+	glutPassiveMotionFunc(zprMotion);
 }
 
 static void
-	zprReshape(int w,int h)
+	zprReshape(int w,int h) 
 {
 	glViewport(0,0,w,h);
 
@@ -114,11 +116,14 @@ static void
 {
 	bool changed = false;
 
+	printf("%d %d\n",x, y);
 	const int dx = x - _mouseX;
 	const int dy = y - _mouseY;
 
 	GLint viewport[4];
 	glGetIntegerv(GL_VIEWPORT,viewport);
+
+	cue.setDirection(x);
 
 	if (dx==0 && dy==0)
 		return;
@@ -227,7 +232,17 @@ static void keyboard (unsigned char key, int x, int y)
 		break;
 	}
 
+	//glTranslatef(-zprReferencePoint[0],-zprReferencePoint[1],-zprReferencePoint[2]);
+	switch(key){
+	case 'z':
+		glScalef(0.7, 0.7, 0.7);
+		break;
+	case 'x':
+		glScalef(10.0/7.0, 10.0/7.0, 10.0/7.0);
+		break;
+	}
 	glTranslatef(-zprReferencePoint[0],-zprReferencePoint[1],-zprReferencePoint[2]);
+
 }
 
 /*****************************************************************

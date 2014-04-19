@@ -5,7 +5,7 @@ class Physicist;
 
 class Ball{
 public:
-	Ball();
+	Ball(int);
 	void drawBall(Physicist, double, double, double);
 	void changePosition(double, double, double);
 	void setX(double x){this->x = x;};
@@ -15,8 +15,10 @@ public:
 	double getZ(){return z;};
 	double getAngle(){return angle;};
 	double getSpeed(){return speed;};
+	int getNumber(){return number;};
 private:
 	double x, y, a, b, z, angle, speed, radius;
+	int number;
 };
 
 #endif
