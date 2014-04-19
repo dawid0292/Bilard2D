@@ -17,7 +17,7 @@ public:
 	double getSpeed(){return speed;};
 	int getNumber(){return number;};
 private:
-	double x, y, a, b, z, angle, speed, radius;
+	double x, y, a, b, z, angle, speed, radius, rotate;
 	int number;
 };
 

@@ -282,7 +282,7 @@ void drawScene()
 	//Tworzenie Kuli bia³ej:)
 	allBalls[0].drawBall(physicist, 1.0,1.0,1.0);
 	cue.drawCue(allBalls[0], 1.0,1.0,1.0);
-	physicist.moveBall(allBalls[0]);
+	
 	//whiteBall.changePosition(0.0, 0.0, (double)++i/1000.0);
 	/*glPushMatrix();
 	glTranslatef(0.5,0.05,0);
@@ -312,13 +312,9 @@ void animate() {
 	//std::cout<<"jestes w animate"<<std::endl;
 	//drawScene();
 
-
+	physicist.moveBall(allBalls[0]);
 	glutPostRedisplay();
-
-
 	
-
-
 }
 //! Zmienne opisuj¹ce materia³ i œwiat³o OpenGL
 const GLfloat light_ambient[] = { 0.0f, 0.0f, 0.0f, 1.0f };

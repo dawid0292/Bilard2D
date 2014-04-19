@@ -18,7 +18,10 @@ void Cue::drawCue(Ball whiteBall, double r, double g, double b){
 	glPushMatrix();	
 	glColor3d(r ,g, b);
 	//glScalef(0.05, 0.05, 0.05);
-	glTranslatef(whiteBall.getX(), 0.0, whiteBall.getZ());
+	std::cout<<"pozycja bialej w kiju "<<whiteBall.getX()<<" "<<whiteBall.getZ()<<std::endl;
+	
+	glTranslated(whiteBall.getX(), 0.0, whiteBall.getZ());
+	glTranslated(x, y, z);
 	glRotated(angle, 0.0, 1.0, 0.0);
 	gluCylinder(obj, smallerRadius, biggerRadius, 1.31, 30, 30);
 	glPopMatrix();

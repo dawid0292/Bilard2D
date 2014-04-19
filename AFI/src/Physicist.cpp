@@ -7,7 +7,7 @@
 void Physicist::moveBall(Ball & ball){
 	double tmpX = sin(3.14 * ball.getAngle() / 180.0) * ball.getSpeed() / 10.0;
 	double tmpZ = cos(3.14 * ball.getAngle() / 180.0) * ball.getSpeed() / 10.0;
-	//std::cout<<tmpX<<std::endl;
+	std::cout<<tmpX<<" "<<tmpZ<<std::endl;
 	ball.changePosition(ball.getX() + tmpX, 0.0, ball.getZ() + tmpZ);
 	ball.setSpeed(ball.getSpeed() * 0.95);
 	if(ball.getSpeed() < 0.1)
