@@ -5,11 +5,15 @@
 #include <vector>
 #include "Vertex.h"
 
+
 class PoolTable{
 private:
 	double x, y, z;
+
+
 public:
-	void drawTable(int, std::vector< Vertex >, std::vector< Vertex>);
+	void drawTable(int, std::vector< Vertex >, std::vector< Vertex>, std::vector<Vertex> uv);
+
 };
 
 #endif

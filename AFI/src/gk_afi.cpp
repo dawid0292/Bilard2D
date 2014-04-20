@@ -11,11 +11,11 @@
 #include <osg/Vec3>
 #include <osg/Quat>
 #include <vector>
-
-
-
+#include "imageloader.h"
 
 int i = 0;
+
+
 
 
 
@@ -123,89 +123,6 @@ std::vector< Vertex > vertices;
 std::vector< Vertex > uvs;
 std::vector< Vertex > normals;
 
-static GLfloat V_table[][3] =
-	/*{{-2.750000, 0.015718, 1.385509}, 
-	{-2.750000, 0.015718, 1.256944},
-	{2.750000, 0.015718, 1.256944},
-	{2.750000, 0.015718, 1.385509},
-	{-2.750000, 0.144282, 1.385509},
-	{-2.750000, 0.144282, 1.256944},
-	{2.750000, 0.144282, 1.256944},
-	{2.750000, 0.144282, 1.385509}};*/ {  {-1.22f, 0.0f, 0.64f}, //v0
-{1.22f, 0.0f, 0.64f},	//v1
-{1.22f, 0.0f, -0.64f}, //v2
-{-1.22f, 0.0f, -0.64f}, //v3
-{-1.22f, -0.40f, 0.64f}, //v4
-{1.22f, -0.40f, 0.64f}, //v5
-{1.22f, -0.40f, -0.64f}, //v6
-{-1.22f, -0.40f, -0.64f}, //v7
-
-{-0.82f, -0.40f, 0.44f}, //v8
-{0.82f, -0.40f, 0.44f}, //v9
-{0.82f, -0.40f, -0.44f}, //v10
-{-0.82f, -0.40f, -0.44f}, //v11
-{-0.82f, -1.00f, 0.44f}, //v12
-{0.82f, -1.0f, 0.44f}, //v13
-{0.82f, -1.0f, -0.44f}, //v14
-{-0.82f, -1.0f, -0.44f}}; //v15
-
-static int S_table[][3] = /*{ {5,6,1}, //s1
-						  {6,7,2}, //s2
-						  {7,8,3}, //s3
-						  {8,5,4}, //s4
-						  {1,2,4}, //s5
-						  {8,7,5}, //s6
-						  {6,2,1}, //s7
-						  {7,3,2}, //s8
-						  //s9
-						  {8,4,3}, //s10
-						  {5,1,4}, //s11
-						  {2,3,4}, //s12
-						  {7,6,5}}; //s13
-						  {6,9,10}, //s14
-						  {6,7,10}, //s15
-						  {7,10,11}, //s16
-						  {4,7,11}, //s17
-						  {4,8,11}, //s18
-						  {8,9,12}, //s19
-						  {9,12,13}, //s20
-						  {9,10,13}, //s21
-						  {10,13,14}, //s22
-						  {10,14,15}, //s23
-						  {10,11,15}, //s24
-						  {11,12,15}, //s25
-						  {8,11,12}, //s26
-						  {12,13,14}, //s27
-						  {12,13,15}}; //s28*/
-{ {0,3,1}, //s1
-{1,3,2}, //s2
-{4,0,5}, //s3
-{0,1,5}, //s4
-{5,1,6}, //s5
-{1,2,6}, //s6
-{6,2,7}, //s7
-{2,3,7}, //s8
-{4,3,7}, //s9
-{0,3,4}, //s10
-{4,5,8}, //s11
-{5,8,11}, //s12
-{5,6,9}, //s13
-{6,9,10}, //s14
-{6,7,10}, //s15
-{7,10,11}, //s16
-{4,7,11}, //s17
-{4,8,11}, //s18
-{8,9,12}, //s19
-{9,12,13}, //s20
-{9,10,13}, //s21
-{10,13,14}, //s22
-{10,14,15}, //s23
-{10,11,15}, //s24
-{11,12,15}, //s25
-{8,11,12}, //s26
-{12,13,14}, //s27
-{12,13,15}}; //s28
-
 
 
 /*void DrawFigure(int n, GLfloat v[][3], int s[][3])
@@ -226,6 +143,7 @@ glEnd();
 //! Tutaj inicjalizowane s¹ pierwsze pozycje obiektów
 void initObjects()
 {
+	
 	/*
 	glViewport(0, 0, 800, 600);
 	glMatrixMode(GL_PROJECTION);
@@ -265,17 +183,26 @@ void refreshObject(const osg::Matrix & objectMatrix)
 // Drawing (display) routine.
 void drawScene()
 {
+		//glEnable(GL_TEXTURE_2D);
+	//glBindTexture(GL_TEXTURE_2D, _textureId);
+	
+	//Bottom
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	
 	// Clear screen to background color.
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	//Ball whiteBall = Ball();
 	//std::cout<<vertices[vertices.size() - 1].x<<std::endl;
-	poolTable.drawTable(vertices.size() , vertices, normals);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity;
 	
-
+	
+	
+	poolTable.drawTable(vertices.size() , vertices, normals, uvs);
 
 	//DrawFigure(28, V_table, S_table);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity;//ja bym to usunal
+	
+	//ja bym to usunal
 	//Tworzenie Kuli bia³ej:)
 	whiteBall.drawBall(physicist, 1.0,1.0,1.0);
 	cue.drawCue(whiteBall, 1.0,1.0,1.0);
@@ -371,7 +298,7 @@ void setup()
 // registers callback routines and begins processing.
 int main(int argc, char **argv) 
 {  
-
+	bool res = loadOBJ("stol.obj", vertices, uvs, normals);
 	// Initialize GLUT.
 	glutInit(&argc, argv);
 
@@ -388,7 +315,7 @@ int main(int argc, char **argv)
 	//gluLookAt( 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0 );
 
 
-	bool res = loadOBJ("stol.obj", vertices, uvs, normals);
+	
 	std::cout<<" "<<vertices.size();
 	for(int i = 0; i < vertices.size(); i++){
 		//std::cout<<vertices[i].x<<" "<<vertices[i].y<<" "<<vertices[i].z<<std::endl;
