@@ -60,6 +60,7 @@ void
 	glutKeyboardFunc(keyboard);
 	glutMouseFunc(zprMouse);
 	glutPassiveMotionFunc(zprMotion);
+	//glutMotionFunc(zprMotion);
 }
 
 static void
