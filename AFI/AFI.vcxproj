@@ -98,20 +98,22 @@ xcopy "$(ProjectDir)\..\external\libs\OpenThreads\release\*.dll" "$(ProjectDir)\
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\Desktop\Imageloader\imageloader.cpp" />
     <ClCompile Include="src\Ball.cpp" />
     <ClCompile Include="src\Cue.cpp" />
     <ClCompile Include="src\gk_afi.cpp" />
+    <ClCompile Include="src\imageloader.cpp" />
     <ClCompile Include="src\Physicist.cpp" />
     <ClCompile Include="src\PoolTable.cpp" />
     <ClCompile Include="src\zpr.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\Desktop\Imageloader\imageloader.h" />
     <ClInclude Include="src\Ball.h" />
+    <ClInclude Include="src\constants.h" />
     <ClInclude Include="src\Cue.h" />
+    <ClInclude Include="src\imageloader.h" />
     <ClInclude Include="src\Physicist.h" />
     <ClInclude Include="src\PoolTable.h" />
+    <ClInclude Include="src\Vertex.h" />
     <ClInclude Include="src\zpr.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

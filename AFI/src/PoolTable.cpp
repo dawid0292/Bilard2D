@@ -3,7 +3,39 @@
 #include "imageloader.h"
 
 
+PoolTable::PoolTable(double minX, double maxX, double minZ, double maxZ){
+	this->minX = minX;
+	this->maxX = maxX;
+	this->minZ = minZ;
+	this->maxZ = maxZ;
+	xPocket[0] = -2,4;
+	xPocket[1] = 0.0;
+	xPocket[2] = 2,4;
+	xPocket[3] = -2,4;
+	xPocket[4] = 0.0;
+	xPocket[5] = 2,4;
 
+	zPocket[0] = -1,293903;
+	zPocket[1] = 0.983;
+	zPocket[2] = -1,293903;
+	zPocket[3] = 0.983;
+	zPocket[4] = -1,293903;
+	zPocket[5] = 0.983;
+
+	xLeftTopPocket = -2,4;
+	zLeftTopPocket = -1,293903;
+	xMiddleTopPocket = 0.0;
+	zMiddleTopPocket = -1,293903;
+	xRightTopPocket = 2.4;
+	zRightTopPocket = -1,293903;
+	xLeftBottomPocket = -2.4;
+	zLeftBottomPocket = 0.983;
+	xMiddleBottomPocket = 0.0;
+	zMiddleBottomPocket = 0.983;
+	xRightBottomPocket = 2.4; 
+	zRightBottomPocket = 0.983;
+	pocketRadius = 0.3109;
+}
 
 
 GLuint loadTexture(Image* image) {

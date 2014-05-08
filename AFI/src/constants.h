@@ -1,0 +1,2 @@
+#define PI 3.14159265359
+#define MOTIONDIVIDER 50.0

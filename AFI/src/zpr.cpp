@@ -4,6 +4,7 @@
 #include <math.h>
 #include "zpr.h"
 #include "Cue.h"
+#include "constants.h"
 
 /* This code was originally C++ :-) */
 
@@ -80,13 +81,22 @@ static void
 	glMatrixMode(GL_MODELVIEW);
 }
 
-static void
-	zprMouse(int button, int state, int x, int y)
-{
-	GLint viewport[4];
+static void	zprMouse(int button, int state, int x, int y){
+	//printf("zprMouse\n");
+	if(state == GLUT_DOWN && button == GLUT_LEFT_BUTTON && cue.getHitBall()){
+		cue.setIncreasePower(true);
+		//cue.setHitBall(true);
+		//cue.setPower(cue.getPower() + 0.05);
+		//state = GLUT_UP;
+	}else if(state == GLUT_UP && button == GLUT_LEFT_BUTTON){
+		cue.setIncreasePower(false);
+		cue.setShowCue(false);
+		//cue.setHitBall(false);
+	}
+	/*GLint viewport[4];
 
 	/* Do picking */
-	if (state==GLUT_DOWN)
+	/*if (state==GLUT_DOWN)
 		zprPick(x,glutGet(GLUT_WINDOW_HEIGHT)-1-y,3,3);
 
 	_mouseX = x;
@@ -109,24 +119,24 @@ static void
 
 	glGetIntegerv(GL_VIEWPORT,viewport);
 	pos(&_dragPosX,&_dragPosY,&_dragPosZ,x,y,viewport);
-	glutPostRedisplay();
+	glutPostRedisplay();*/
 }
 
-static void
-	zprMotion(int x, int y)
-{
-	bool changed = false;
+static void	zprMotion(int x, int y){
+	//bool changed = false;
 
-	printf("%d %d\n",x, y);
-	const int dx = x - _mouseX;
-	const int dy = y - _mouseY;
+	//printf("%d %d\n",x, y);
+	//const int dx = x - _mouseX;
+	//const int dy = y - _mouseY;
 
-	GLint viewport[4];
-	glGetIntegerv(GL_VIEWPORT,viewport);
+	//GLint viewport[4];
+	//glGetIntegerv(GL_VIEWPORT,viewport);
+	if(cue.getShowCue()){
+		//printf("setDirection\n");
+		cue.setDirection(x);
+	}
 
-	cue.setDirection(x);
-
-	if (dx==0 && dy==0)
+	/*if (dx==0 && dy==0)
 		return;
 
 	if (_mouseMiddle || (_mouseLeft && _mouseRight))
@@ -149,11 +159,11 @@ static void
 			ax = dy;
 			ay = dx;
 			az = 0.0;
-			angle = vlen(ax,ay,az)/(double)(viewport[2]+1)*180.0;
+			angle = vlen(ax,ay,az)/(double)(viewport[2]+1)*180.0;*/
 
 			/* Use inverse matrix to determine local axis of rotation */
 
-			bx = _matrixInverse[0]*ax + _matrixInverse[4]*ay + _matrixInverse[8] *az;
+			/*bx = _matrixInverse[0]*ax + _matrixInverse[4]*ay + _matrixInverse[8] *az;
 			by = _matrixInverse[1]*ax + _matrixInverse[5]*ay + _matrixInverse[9] *az;
 			bz = _matrixInverse[2]*ax + _matrixInverse[6]*ay + _matrixInverse[10]*az;
 
@@ -188,7 +198,7 @@ static void
 			{
 				getMatrix();
 				glutPostRedisplay();
-			}
+			}*/
 }
 
 static void keyboard (unsigned char key, int x, int y)
@@ -203,7 +213,7 @@ static void keyboard (unsigned char key, int x, int y)
 		if(incidenceAngle < 90){
 			//printf("%f %f",cos(3.14 * rotateAngle / 180.0),sin(3.14 * rotateAngle / 180.0));
 			for(int i = 0; i < 3; i++){
-				glRotatef(1.0, cos(3.1415926535 * rotateAngle / 180.0), 0.0, sin(3.1415926535 * rotateAngle/ 180.0));
+				glRotatef(1.0, cos(PI * rotateAngle / 180.0), 0.0, sin(PI * rotateAngle/ 180.0));
 				incidenceAngle += 1.0;
 			}
 		}
@@ -211,7 +221,7 @@ static void keyboard (unsigned char key, int x, int y)
 	case 'w':
 		if(incidenceAngle > 0){
 			for(int i = 0; i < 3; i++){
-				glRotatef(-1.0, cos(3.1415926535 * rotateAngle / 180.0), 0.0, sin(3.1415926535 * rotateAngle / 180.0));
+				glRotatef(-1.0, cos(PI * rotateAngle / 180.0), 0.0, sin(PI * rotateAngle / 180.0));
 				incidenceAngle -= 1.0;
 			}
 		}

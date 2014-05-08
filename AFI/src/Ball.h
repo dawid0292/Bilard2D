@@ -6,13 +6,15 @@ class Physicist;
 class Ball{
 public:
 	Ball(int);
+	Ball(int, double, double, double);
 	void drawBall(Physicist, double, double, double);
 	void changePosition(double, double, double);
 	void setX(double x){this->x = x;};
 	void setZ(double z){this->z = z;};
 	void setSpeed(double speed){this->speed = speed;};
-	void setAngle(double angle){this->angle = angle;};
+	void setAngle(double);
 	double getX(){return x;};
+	double getY(){return y;};
 	double getZ(){return z;};
 	double getAngle(){return angle;};
 	double getSpeed(){return speed;};

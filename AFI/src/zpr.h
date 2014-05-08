@@ -68,6 +68,7 @@ extern "C"
 
 void zprInit();
 
+//extern bool _mouseLeft;
 extern GLfloat zprReferencePoint[4];
 
 /* Picking API (Optional) */
